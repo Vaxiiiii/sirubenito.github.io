@@ -10,98 +10,62 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-            color: #333;
         }
         h1 {
-            font-size: 3rem;
-            color: #ff6347;
-            margin-bottom: 20px;
-            text-align: center; /* Center the text */
-        }
-        #question-container {
-            text-align: center; /* Center the buttons */
-        }
-        button {
-            font-size: 1rem;
-            padding: 10px 20px;
-            margin: 5px;
-            border: 2px solid #333; /* Added border */
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #ddd;
+            font-size: 50px;
         }
     </style>
 </head>
 <body>
-    <div id="question-container">
-        <h1>Is there a possibility for me?</h1>
-        <button id="yes-button">Yes</button>
-        <button id="no-button">No</button>
-    </div>
-    <div id="hearts-container" style="display: none;"></div>
+    <h1 id="typewriter"></h1>
+    <canvas id="matrix"></canvas>
     <script>
-        const yesButton = document.getElementById('yes-button');
-        const noButton = document.getElementById('no-button');
-        const questionContainer = document.getElementById('question-container');
-        const heartsContainer = document.getElementById('hearts-container');
-        let noCount = 0;
+        const text = "HELLO IM RUBS AM A HACKER ❤️";
+        let index = 0;
+        function type() {
+            if (index < text.length) {
+                document.getElementById("typewriter").innerHTML += text.charAt(index);
+                index++;
+                setTimeout(type, 100);
+            } else {
+                setTimeout(startMatrix, 2000);
+            }
+        }
+        setTimeout(type, 2000);
 
-        yesButton.addEventListener('click', () => {
-            questionContainer.style.display = 'none';
-            heartsContainer.style.display = 'block';
-            createHearts();
-        });
+        function startMatrix() {
+            document.getElementById("typewriter").style.display = "none";
+            const canvas = document.getElementById("matrix");
+            const ctx = canvas.getContext("2d");
 
-        noButton.addEventListener('click', () => {
-            noCount++;
-            if (noCount > 1) {
-                noButton.innerText = 'Are you sure?';
-            }
-            if (noCount > 2) {
-                noButton.innerText = 'Really?';
-            }
-            if (noCount > 3) {
-                noButton.innerText = 'Come on!';
-            }
-            if (noCount > 4) {
-                noButton.innerText = 'Please?';
-            }
-            if (noCount > 5) {
-                noButton.innerText = 'Why not?';
-            }
-            
-            yesButton.style.fontSize = `${20 + noCount * 5}px`;
-        });
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
-        function createHearts() {
-            for (let i = 0; i < 100; i++) {
-                const heart = document.createElement('div');
-                heart.classList.add('heart');
-                heart.innerHTML = '❤️';
-                heart.style.left = `${Math.random() * 100}vw`;
-                heart.style.animationDuration = `${Math.random() * 2 + 3}s`;
-                heartsContainer.appendChild(heart);
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+
+            function draw() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#0F0";
+                ctx.font = fontSize + "px arial";
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
             }
+
+            setInterval(draw, 33);
         }
     </script>
-    <style>
-        .heart {
-            position: absolute;
-            top: -10px;
-            font-size: 20px;
-            animation: fall linear infinite;
-        }
-
-        @keyframes fall {
-            to {
-                transform: translateY(100vh);
-            }
-        }
-    </style>
 </body>
 </html>
